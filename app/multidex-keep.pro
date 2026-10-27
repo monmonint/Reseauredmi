@@ -1,0 +1,4 @@
+-keep class fr.reseauredmi.mode.NetworkUserService { *; }
+-keep class fr.reseauredmi.mode.INetworkModeService { *; }
+-keep class fr.reseauredmi.mode.INetworkModeService$Stub { *; }
+-keep class fr.reseauredmi.mode.INetworkModeService$Stub$Proxy { *; }
