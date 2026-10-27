@@ -60,7 +60,13 @@ object AdbMode {
                 var pairedHost: String? = null
                 for (candidate in hosts) {
                     if (!TcpProbe.open(candidate, pairPort, 2_500)) {
-                        log("Rien n’écoute sur $candidate:$pairPort.")
+                        log("Rien n’écoute sur $candidate:$pairPort (port d’appairage, fenêtre du code).")
+                        if (TcpProbe.open(candidate, connectPort, 800)) {
+                            log(
+                                "Le port $connectPort répond : c’est le port de connexion, celui de l’écran « Débogage sans fil ». " +
+                                    "Le port d’appairage est l’autre, dans la fenêtre « Associer avec l’appareil ».",
+                            )
+                        }
                         continue
                     }
                     log("Appairage sur $candidate:$pairPort…")

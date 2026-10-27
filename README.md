@@ -46,13 +46,20 @@ Le téléphone doit être **connecté à un Wi-Fi** pendant cette étape seuleme
 2. **Paramètres → Paramètres supplémentaires → Options pour les développeurs.**
 3. Activez **Débogage USB**.
 4. Activez **Débogage USB (paramètres de sécurité)** s’il est proposé. Sans ça, MIUI refuse souvent les commandes shell.
-5. Activez **Débogage sans fil**. Notez l’adresse IP et le **port de connexion** (celui affiché sous le commutateur).
-6. Ouvrez **Appairer l’appareil avec un code d’appairage**. Notez le **port d’appairage** (différent) et le code à 6 chiffres. Le code expire vite.
-7. Dans **Mode 3G/4G**, ouvrez **Préparer l’accès local**, recopiez les champs, puis **Appairer et activer le port 5555**.
+5. Activez **Débogage sans fil**.
+6. Ouvrez **Appairer l’appareil avec un code d’association** et **laissez cette fenêtre ouverte**.
+7. Dans **Mode 3G/4G**, **Préparer l’accès local** : recopiez seulement le code à 6 chiffres, puis **Appairer avec ce code**.
+
+L’application cherche elle-même les deux ports en mDNS (`_adb-tls-pairing._tcp` pour l’appairage, `_adb-tls-connect._tcp` pour la connexion). Le port d’appairage n’existe que tant que la fenêtre du code est ouverte.
+
+Si la recherche ne trouve rien, saisissez les ports à la main **sans les inverser**. Les deux écrans affichent « Adresse IP & Port », mais ce n’est pas le même nombre :
+
+| Champ | Où le lire |
+| --- | --- |
+| Port d’appairage | Fenêtre **Associer avec l’appareil**, à côté du code. Exemple : `192.168.1.12:37527` → **37527**. |
+| Port de connexion | Écran principal **Débogage sans fil**, sous l’interrupteur. Exemple : `192.168.1.12:42841` → **42841**. |
 
 L’application s’appaire, se connecte au port chiffré, envoie l’équivalent de `adb tcpip 5555`, puis vérifie que `127.0.0.1:5555` répond. Le débogage sans fil peut ensuite s’afficher comme arrêté : c’est normal, le port fixe 5555 a pris le relais.
-
-Les boutons « Chercher le port » utilisent le DNS multicast. Sur un téléphone, cette recherche rate souvent. La saisie manuelle est le chemin prévu.
 
 ### Avec un ordinateur
 

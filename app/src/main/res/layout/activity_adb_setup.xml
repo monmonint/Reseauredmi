@@ -37,40 +37,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:hint="@string/adb_host_hint">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/hostInput"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:importantForAutofill="no"
-                android:inputType="textNoSuggestions"
-                android:singleLine="true" />
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <com.google.android.material.textfield.TextInputLayout
-            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:hint="@string/adb_pair_port_hint">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/pairPortInput"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:digits="0123456789"
-                android:importantForAutofill="no"
-                android:inputType="number"
-                android:maxLength="5"
-                android:singleLine="true" />
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <com.google.android.material.textfield.TextInputLayout
-            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
             android:hint="@string/adb_code_hint">
 
             <com.google.android.material.textfield.TextInputEditText
@@ -81,48 +47,112 @@
                 android:importantForAutofill="no"
                 android:inputType="number"
                 android:maxLength="6"
-                android:singleLine="true" />
+                android:singleLine="true"
+                android:textSize="28sp" />
         </com.google.android.material.textfield.TextInputLayout>
 
-        <com.google.android.material.textfield.TextInputLayout
-            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+        <TextView
+            android:id="@+id/discoveredText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:hint="@string/adb_connect_port_hint">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/connectPortInput"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:digits="0123456789"
-                android:importantForAutofill="no"
-                android:inputType="number"
-                android:maxLength="5"
-                android:singleLine="true" />
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/findPairButton"
-            style="@style/Widget.Material3.Button.TextButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:text="@string/adb_find_pair" />
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/findConnectButton"
-            style="@style/Widget.Material3.Button.TextButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/adb_find_connect" />
+            android:layout_marginTop="12dp"
+            android:text="@string/adb_discovered_idle"
+            android:textAppearance="@style/TextAppearance.Material3.BodyMedium" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/pairButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="12dp"
             android:text="@string/adb_pair_action" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/findBothButton"
+            style="@style/Widget.Material3.Button.TextButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/adb_find_both" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/manualToggle"
+            style="@style/Widget.Material3.Button.TextButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/adb_manual_show" />
+
+        <LinearLayout
+            android:id="@+id/manualGroup"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:hint="@string/adb_pair_port_hint">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/pairPortInput"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:digits="0123456789"
+                    android:importantForAutofill="no"
+                    android:inputType="number"
+                    android:maxLength="5"
+                    android:singleLine="true" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="@string/adb_pair_help"
+                android:textAppearance="@style/TextAppearance.Material3.BodySmall" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:hint="@string/adb_connect_port_hint">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/connectPortInput"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:digits="0123456789"
+                    android:importantForAutofill="no"
+                    android:inputType="number"
+                    android:maxLength="5"
+                    android:singleLine="true" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="@string/adb_connect_help"
+                android:textAppearance="@style/TextAppearance.Material3.BodySmall" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:hint="@string/adb_host_hint">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/hostInput"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:importantForAutofill="no"
+                    android:inputType="textNoSuggestions"
+                    android:singleLine="true" />
+            </com.google.android.material.textfield.TextInputLayout>
+        </LinearLayout>
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/pcButton"
