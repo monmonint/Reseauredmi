@@ -6,6 +6,7 @@ object Prefs {
     private const val FILE = "mode_reseau"
     private const val MODE = "mode"
     private const val BOOT = "reapply_on_boot"
+    private const val ADB = "adb_loopback_ready"
 
     private fun prefs(context: Context) =
         context.applicationContext.getSharedPreferences(FILE, Context.MODE_PRIVATE)
@@ -26,5 +27,11 @@ object Prefs {
 
     fun setReapplyOnBoot(context: Context, enabled: Boolean) {
         prefs(context).edit().putBoolean(BOOT, enabled).apply()
+    }
+
+    fun adbLoopbackReady(context: Context): Boolean = prefs(context).getBoolean(ADB, false)
+
+    fun setAdbLoopbackReady(context: Context, ready: Boolean) {
+        prefs(context).edit().putBoolean(ADB, ready).apply()
     }
 }

@@ -136,9 +136,7 @@ class NetworkUserService() : INetworkModeService.Stub() {
 
     private fun grantReadPhoneState(packageName: String, note: (String) -> Unit) {
         if (!packageName.matches(PACKAGE_NAME)) return
-        val result = runShell(
-            arrayOf("/system/bin/pm", "grant", packageName, "android.permission.READ_PHONE_STATE"),
-        )
+        val result = runShell(PhoneCommands.grantReadPhoneState(packageName))
         note("pm grant ${result.code} ${result.text}")
     }
 
@@ -209,31 +207,15 @@ class NetworkUserService() : INetworkModeService.Stub() {
         else -> null
     }
 
-    private fun setCommand(slotIndex: Int, bitmask: Long): Array<String> {
-        val command = mutableListOf("/system/bin/cmd", "phone", "set-allowed-network-types-for-users")
-        if (slotIndex >= 0) {
-            command += "-s"
-            command += slotIndex.toString()
-        }
-        command += bitmask.toString(2)
-        return command.toTypedArray()
-    }
+    private fun setCommand(slotIndex: Int, bitmask: Long): Array<String> =
+        PhoneCommands.setAllowed(slotIndex, bitmask)
 
-    private fun getCommand(slotIndex: Int): Array<String> {
-        val command = mutableListOf("/system/bin/cmd", "phone", "get-allowed-network-types-for-users")
-        if (slotIndex >= 0) {
-            command += "-s"
-            command += slotIndex.toString()
-        }
-        return command.toTypedArray()
-    }
+    private fun getCommand(slotIndex: Int): Array<String> = PhoneCommands.getAllowed(slotIndex)
 
     private fun writeSettings(subId: Int, rilMode: Int, note: (String) -> Unit): Boolean {
-        val keys = mutableListOf("preferred_network_mode")
-        if (subId >= 0) keys += "preferred_network_mode$subId"
         var ok = true
-        for (key in keys) {
-            val result = runShell(arrayOf("/system/bin/settings", "put", "global", key, rilMode.toString()))
+        for (key in PhoneCommands.settingKeys(subId)) {
+            val result = runShell(PhoneCommands.putSetting(key, rilMode))
             note("settings put $key -> ${result.code} ${result.text}")
             if (result.code != 0) ok = false
         }
@@ -241,8 +223,8 @@ class NetworkUserService() : INetworkModeService.Stub() {
     }
 
     private fun readSettings(subId: Int): String? {
-        val key = if (subId >= 0) "preferred_network_mode$subId" else "preferred_network_mode"
-        val result = runShell(arrayOf("/system/bin/settings", "get", "global", key))
+        val key = PhoneCommands.settingKeys(subId).last()
+        val result = runShell(PhoneCommands.getSetting(key))
         return result.text.lineSequence().map { it.trim() }.firstOrNull { it.toIntOrNull() != null }
     }
 

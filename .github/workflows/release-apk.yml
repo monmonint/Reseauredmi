@@ -70,7 +70,7 @@ jobs:
 
           Téléchargement direct : [Mode-3G-4G.apk](https://github.com/${{ github.repository }}/releases/download/latest/Mode-3G-4G.apk)
 
-          L’application force le réseau mobile en 3G (WCDMA uniquement) ou en 4G (LTE préféré), via Shizuku. Le menu radio *#*#4636#*#* reste disponible en secours.
+          L’application force le réseau mobile en 3G (WCDMA uniquement) ou en 4G (LTE préféré). Après une préparation (débogage sans fil ou adb tcpip 5555), les boutons passent par ADB sur 127.0.0.1, sans Wi-Fi. Le port se referme au redémarrage. Shizuku et le menu radio restent des secours.
           EOF
           if gh release view latest >/dev/null 2>&1; then
             gh release delete latest --yes --cleanup-tag

@@ -24,7 +24,6 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private val controller by lazy { NetworkModeController(this) }
     private var highlighted: ForcedMode? = null
-    private var pendingMode: ForcedMode? = null
     private var selectedSubId: Int = SimResolver.defaultSubId()
     private var busy = false
 
@@ -42,14 +41,9 @@ class MainActivity : AppCompatActivity() {
         monitor.publishNow()
     }
 
-    private val shizukuPermission = Shizuku.OnRequestPermissionResultListener { _, result ->
+    private val shizukuPermission = Shizuku.OnRequestPermissionResultListener { _, _ ->
         renderShizuku()
-        if (result == PackageManager.PERMISSION_GRANTED) {
-            pendingMode?.let { mode ->
-                pendingMode = null
-                apply(mode)
-            } ?: refreshPreference()
-        }
+        refreshPreference()
     }
 
     private val binderReceived = Shizuku.OnBinderReceivedListener {
@@ -78,6 +72,9 @@ class MainActivity : AppCompatActivity() {
         }
         binding.card3g.setOnClickListener { apply(ForcedMode.WCDMA) }
         binding.card4g.setOnClickListener { apply(ForcedMode.LTE) }
+        binding.adbSetupButton.setOnClickListener {
+            startActivity(Intent(this, AdbSetupActivity::class.java))
+        }
         binding.shizukuAction.setOnClickListener { onShizukuAction() }
         binding.radioButton.setOnClickListener { openRadio() }
         binding.permissionButton.setOnClickListener {
@@ -93,6 +90,7 @@ class MainActivity : AppCompatActivity() {
 
         renderSelection()
         renderPreference(highlighted)
+        renderAdb()
         renderShizuku()
         maybeAskPhonePermission()
     }
@@ -101,6 +99,7 @@ class MainActivity : AppCompatActivity() {
         super.onStart()
         renderSims()
         monitor.start()
+        renderAdb()
         renderShizuku()
         refreshPreference()
     }
@@ -159,7 +158,6 @@ class MainActivity : AppCompatActivity() {
 
     private fun apply(mode: ForcedMode) {
         if (busy) return
-        if (!ensureShizuku(mode)) return
         busy = true
         binding.progress.isVisible = true
         binding.statusText.text = getString(R.string.status_applying)
@@ -170,52 +168,37 @@ class MainActivity : AppCompatActivity() {
                 busy = false
                 binding.progress.isVisible = false
                 showOutcome(outcome)
+                renderAdb()
                 renderSims()
                 monitor.publishNow()
             }
         }
     }
 
-    private fun ensureShizuku(mode: ForcedMode): Boolean {
-        if (!ShizukuStatus.installed(this)) {
-            dialog(R.string.shizuku_missing_title, R.string.shizuku_missing_body) { openShizukuInstall() }
-            return false
-        }
-        if (ShizukuStatus.running() && Shizuku.isPreV11()) {
-            dialog(R.string.shizuku_old_title, R.string.shizuku_old_body, null)
-            return false
-        }
-        if (!ShizukuStatus.running()) {
-            dialog(R.string.shizuku_stopped_title, R.string.shizuku_stopped_body) { openShizukuApp() }
-            return false
-        }
-        if (!ShizukuStatus.granted()) {
-            pendingMode = mode
-            Shizuku.requestPermission(REQUEST_SHIZUKU)
-            return false
-        }
-        return true
-    }
-
     private fun showOutcome(outcome: ApplyOutcome) {
-        binding.statusText.text = when (outcome.level) {
-            ModeReport.Level.CONFIRMED -> when (outcome.mode) {
-                ForcedMode.WCDMA -> getString(R.string.status_confirmed_3g)
-                ForcedMode.LTE -> getString(R.string.status_confirmed_4g)
-            }
-            ModeReport.Level.SENT -> getString(R.string.status_sent)
-            ModeReport.Level.FAILED -> getString(R.string.status_failed)
+        binding.statusText.text = when {
+            outcome.needsSetup -> outcome.detail
+            outcome.level == ModeReport.Level.CONFIRMED && outcome.mode == ForcedMode.WCDMA ->
+                getString(R.string.status_confirmed_3g)
+            outcome.level == ModeReport.Level.CONFIRMED -> getString(R.string.status_confirmed_4g)
+            outcome.level == ModeReport.Level.SENT -> getString(R.string.status_sent)
+            else -> getString(R.string.status_failed)
         }
         binding.detailsText.text = outcome.detail
         if (outcome.level != ModeReport.Level.FAILED) {
             highlighted = outcome.mode
             renderSelection()
             renderPreference(outcome.mode)
+        } else if (outcome.needsSetup) {
+            dialog(R.string.adb_needed_title, R.string.adb_needed_body) {
+                startActivity(Intent(this, AdbSetupActivity::class.java))
+            }
         }
     }
 
     private fun refreshPreference() {
-        if (!ShizukuStatus.ready() || busy) return
+        if (busy) return
+        if (!Prefs.adbLoopbackReady(this) && !ShizukuStatus.ready()) return
         val subId = selectedSubId
         AppExecutors.io.execute {
             val report = controller.read(subId) ?: return@execute
@@ -252,6 +235,12 @@ class MainActivity : AppCompatActivity() {
             ForcedMode.LTE -> getString(R.string.preference_4g)
             null -> getString(R.string.preference_unknown)
         }
+    }
+
+    private fun renderAdb() {
+        val ready = Prefs.adbLoopbackReady(this)
+        binding.adbStatus.text = getString(if (ready) R.string.adb_state_ready else R.string.adb_state_missing)
+        binding.adbSetupButton.text = getString(if (ready) R.string.adb_setup_again else R.string.adb_setup_button)
     }
 
     private fun renderShizuku() {

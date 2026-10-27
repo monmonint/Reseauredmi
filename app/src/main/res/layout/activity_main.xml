@@ -179,10 +179,39 @@
             android:textAppearance="@style/TextAppearance.Material3.BodyLarge" />
 
         <TextView
-            android:id="@+id/shizukuStatus"
+            android:id="@+id/adbStatus"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
+            android:textAppearance="@style/TextAppearance.Material3.TitleMedium" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/adbSetupButton"
+            style="@style/Widget.Material3.Button.TonalButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/adb_setup_button" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="@string/adb_caption"
+            android:textAppearance="@style/TextAppearance.Material3.BodySmall" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="@string/fallback_label"
+            android:textAppearance="@style/TextAppearance.Material3.LabelLarge" />
+
+        <TextView
+            android:id="@+id/shizukuStatus"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
             android:textAppearance="@style/TextAppearance.Material3.TitleMedium" />
 
         <com.google.android.material.button.MaterialButton

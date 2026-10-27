@@ -1,7 +1,7 @@
 package fr.reseauredmi.mode
 
 /**
- * Compte-rendu texte renvoyé par le service Shizuku.
+ * Compte-rendu texte renvoyé par le shell ADB ou par le service Shizuku.
  * La partie avant « --- » est une liste clé=valeur, le reste est un journal.
  */
 object ModeReport {

@@ -14,10 +14,6 @@ class NetworkTileService : TileService() {
     }
 
     override fun onClick() {
-        if (!ShizukuStatus.ready()) {
-            openApp()
-            return
-        }
         val next = if (Prefs.mode(this) == ForcedMode.WCDMA) ForcedMode.LTE else ForcedMode.WCDMA
         AppExecutors.io.execute {
             val outcome = NetworkModeController(applicationContext).apply(next, SimResolver.defaultSubId())
@@ -33,7 +29,8 @@ class NetworkTileService : TileService() {
 
     private fun render(mode: ForcedMode?) {
         val tile = qsTile ?: return
-        val ready = ShizukuStatus.ready()
+        val adbReady = Prefs.adbLoopbackReady(this)
+        val ready = adbReady || ShizukuStatus.ready()
         tile.label = when (mode) {
             ForcedMode.WCDMA -> "3G"
             ForcedMode.LTE -> "4G"
@@ -41,7 +38,10 @@ class NetworkTileService : TileService() {
         }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             tile.subtitle = when {
-                !ready -> getString(R.string.tile_shizuku)
+                adbReady && mode == ForcedMode.WCDMA -> "WCDMA"
+                adbReady && mode == ForcedMode.LTE -> "LTE"
+                adbReady -> getString(R.string.tile_toggle)
+                !ready -> getString(R.string.tile_setup)
                 mode == ForcedMode.WCDMA -> "WCDMA"
                 mode == ForcedMode.LTE -> "LTE"
                 else -> getString(R.string.tile_toggle)

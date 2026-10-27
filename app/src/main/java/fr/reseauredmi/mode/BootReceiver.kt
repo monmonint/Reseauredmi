@@ -7,6 +7,7 @@ import android.util.Log
 
 class BootReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent?) {
+        Prefs.setAdbLoopbackReady(context, false)
         if (!Prefs.reapplyOnBoot(context)) return
         val mode = Prefs.mode(context) ?: return
         val pending = goAsync()

@@ -11,8 +11,8 @@ android {
         applicationId = "fr.reseauredmi.mode"
         minSdk = 26
         targetSdk = 34
-        versionCode = 1
-        versionName = "1.0.0"
+        versionCode = 2
+        versionName = "1.1.0"
         multiDexEnabled = true
         multiDexKeepProguard = file("multidex-keep.pro")
     }
@@ -58,6 +58,24 @@ android {
     testOptions {
         unitTests.isReturnDefaultValues = true
     }
+
+    packaging {
+        resources {
+            excludes += setOf(
+                "META-INF/DEPENDENCIES",
+                "META-INF/LICENSE",
+                "META-INF/LICENSE.txt",
+                "META-INF/license.txt",
+                "META-INF/NOTICE",
+                "META-INF/NOTICE.txt",
+                "META-INF/notice.txt",
+                "META-INF/AL2.0",
+                "META-INF/LGPL2.1",
+                "META-INF/versions/9/OSGI-INF/MANIFEST.MF",
+                "META-INF/versions/11/OSGI-INF/MANIFEST.MF",
+            )
+        }
+    }
 }
 
 dependencies {
@@ -68,6 +86,9 @@ dependencies {
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
     implementation("dev.rikka.shizuku:api:13.1.5")
     implementation("dev.rikka.shizuku:provider:13.1.5")
+    implementation("com.github.MuntashirAkon:libadb-android:3.1.1")
+    implementation("org.conscrypt:conscrypt-android:2.5.3")
+    implementation("org.bouncycastle:bcpkix-jdk15to18:1.81")
 
     testImplementation("junit:junit:4.13.2")
 }
